@@ -9,6 +9,10 @@ from kivy.properties import StringProperty, ObjectProperty
 from kivy.lang import Builder
 
 import os
+import kivy
+
+kivy.require('1.9.0')
+
 
 class ParamInput(BoxLayout):
     value = StringProperty('')
