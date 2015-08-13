@@ -62,6 +62,8 @@
 <ParamInputPopup>:
     on_value: text_input.text = self.get_value()
 
+    _popup: popup.__self__
+
     BoxLayout:
         id: box_layout
 
@@ -106,28 +108,56 @@
 
         CButton:
             text: 'Choose file'
-            on_release: popup.open()
+            on_release: root.show_choose()
 
-        Popup:
-            id: popup
-            title: 'Popup window'
-            on_parent: if self.parent == box_layout: self.parent.remove_widget(self)
-            BoxLayout:
-                orientation: 'vertical'
 
-                BoxLayout:
-                    size_hint_y: None
-                    height: '32dp'
+<ChooseDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
 
-                    Button:
-                        text: 'Choose'
-                    Button:
-                        text: 'Dismiss'
-                        on_release: popup.dismiss()
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
 
-                FileChooser:
-                    id: file_chooser
-                    FileChooserListLayout
+            Button:
+                text: "Choose"
+                on_release: root.choose(filechooser.path, filechooser.selection)
+
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save(filechooser.path, text_input.text)
+
 
 <FormPanel>:
     orientation: 'vertical'
@@ -137,6 +167,7 @@
         font_size: '26dp'
   
     BoxLayout:
+        id: box_layout
         orientation: 'vertical'
 
         ParamInputText:
@@ -160,6 +191,6 @@
             label_text: 'File param'
         
         CButton:
-            text: 'Send'
+            text: 'Save'
 
-            on_release: root.send_params()
+            on_release: root.show_save()
